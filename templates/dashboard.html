@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block navbar %}
     <li class="active"><a href="#">Home</a></li>
@@ -11,4 +11,17 @@
         <h1>My First Bootstrap Page</h1>
         <p>Resize this responsive page to see the effect!</p>
     </div>
+
+    {% if lamps %}
+
+        {% for lamp in lamps %}
+            <a href="{{ url_for('lamp') }}/{{ lamp.id }}">
+                <div class="panel panel-default">
+                    <div class="panel-body">{{ lamp.id }} und {{ lamp.ip }}</div>
+                </div>
+            </a>
+        {% endfor %}
+
+    {% endif %}
+
 {% endblock %}

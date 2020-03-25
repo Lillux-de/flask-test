@@ -1,23 +1,34 @@
 {% extends "base.html" %}
 
 {% block navbar %}
-    <li class="active"><a href="#">Home</a></li>
-    <li><a href="#">Page 1</a></li>
-    <li><a href="#">Page 2</a></li>
+    <li class="nav-item active">
+        <a class="nav-link" href="#">Active</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link disabled" href="#">Disabled</a>
+    </li>
 {% endblock %}
 
 {% block content %}
     <div class="jumbotron text-center">
-        <h1>My First Bootstrap Page</h1>
-        <p>Resize this responsive page to see the effect!</p>
+        <h1>Welcome to the Light Hub&trade; Dashboard</h1>
+        <p>
+            Select or <button type="button" class="btn btn-outline-primary">Add</button> some Lamps.
+        </p>
     </div>
 
     {% if lamps %}
 
         {% for lamp in lamps %}
             <a href="{{ url_for('lamp') }}/{{ lamp.id }}">
-                <div class="panel panel-default">
-                    <div class="panel-body">{{ lamp.id }} und {{ lamp.ip }}</div>
+                <div class="card">
+                    <div class="card-body">{{ lamp.id }} und {{ lamp.ip }}</div>
                 </div>
             </a>
         {% endfor %}

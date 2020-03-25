@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/iro.min.js') }}"></script>
+    <script>
+        var colorPicker = new iro.ColorPicker('#colorpicker', {
+            layout: [
+                { component: iro.ui.Box, options: {} }
+            ]
+        });
+//        colorPicker.ui.slice(1, 1);
+        colorPicker.on('color:change', function(color) {
+            // log the current color as a HEX string
+            console.log(color.rgba);
+            //POST to Server. TODO: limit ajax post requests!!
+            $.ajax({
+                url: '{{ url_for('lamp', lampid=lamp) }}',
+                data: color.rgba,
+                type: 'POST',
+//                contentType: 'application/json;charset=UTF-8',
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.log("FEHLER!");
+                    console.log(error);
+                }
+            });
+        });
+
+    </script>
+{% endblock %}
+
+
+{% block navbar %}
+    <li class="nav-item active">
+        <a class="nav-link" href="#">Lamp</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{url_for('dashboard') }}">Dashboard</a>
+    </li>
+{% endblock %}
+
+
+{% block content %}
+    <div class="row" style="margin-top: 2em;">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header"> Pick the Color </div>
+                <div class="card-body" id="colorpicker"></div>
+            </div>
+        </div>
+        <div class="col-md-6" name="other controls">
+            <div class="card">
+                <div class="card-header">Header</div>
+                <div class="card-body">Content</div>
+                <div class="card-footer">Footer</div>
+                </div>
+            <div class="card" style="margin-top: 2em;">
+                <div class="card-header">Header</div>
+                <div class="card-body">Content</div>
+                <div class="card-footer">Footer</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

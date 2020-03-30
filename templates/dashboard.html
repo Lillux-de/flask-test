@@ -24,15 +24,12 @@
     </div>
 
     {% if lamps %}
-
         {% for lamp in lamps %}
-            <a href="{{ url_for('lamp') }}/{{ lamp.id }}">
-                <div class="card">
-                    <div class="card-body">{{ lamp.id }} und {{ lamp.ip }}</div>
-                </div>
-            </a>
+            <div class="card">
+                <div class="card-body">{{ lamp.id }} und {{ lamp.ip }}</div>
+                <a href="{{ url_for('lamp', lampid=lamp.id) }}" class="stretched-link"></a>
+            </div>
         {% endfor %}
-
     {% endif %}
 
 {% endblock %}

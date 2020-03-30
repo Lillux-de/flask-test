@@ -5,7 +5,7 @@
     <script>
         var colorPicker = new iro.ColorPicker('#colorpicker', {
             layout: [
-                { component: iro.ui.Box, options: {} }
+                { component: iro.ui.Wheel, options: {} }
             ]
         });
 //        colorPicker.ui.slice(1, 1);
@@ -27,7 +27,6 @@
                 }
             });
         });
-
     </script>
 {% endblock %}
 
@@ -43,24 +42,37 @@
 
 
 {% block content %}
-    <div class="row" style="margin-top: 2em;">
+    <div class="row">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header"> Pick the Color </div>
                 <div class="card-body" id="colorpicker"></div>
             </div>
         </div>
+
         <div class="col-md-6" name="other controls">
             <div class="card">
-                <div class="card-header">Header</div>
-                <div class="card-body">Content</div>
-                <div class="card-footer">Footer</div>
+                <div class="card-header">Brightness</div>
+                <div class="card-body row">
+                    <input class="col" type="range" min="1" max="100" value="90" id="brightness">
                 </div>
-            <div class="card" style="margin-top: 2em;">
-                <div class="card-header">Header</div>
-                <div class="card-body">Content</div>
-                <div class="card-footer">Footer</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Create a Flow</div>
+                <div class="card-body">
+                    <div class="row">
+                        <button type="button" class="col btn btn-outline-primary">First</button>
+                        <button type="button" class="col btn btn-outline-primary">Second</button>
+                        <button type="button" class="col btn btn-outline-primary">Third</button>
+                        <button type="button" class="col btn btn-outline-primary">Fourth</button>
+                    </div>
+                    <div class="row">
+                        <button type="button" class="col btn btn-primary">Create Flow</button>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
 {% endblock %}

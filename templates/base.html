@@ -13,17 +13,44 @@
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Link JS here (static) -->
     <script src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <!-- custom scripts for inheriting templates. -->
     {% block scripts %}
     {% endblock %}
+
+    <style>
+        .hub {
+            display: block;
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 9vw;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .hub span:nth-child(2) {
+            background: #FF9900;
+            color: #000000;
+            border-radius: 1vw;
+            padding: 0 1vw 1vw 1vw;
+            display: inline-block;
+        }
+    </style>
     {% block styles %}
     {% endblock %}
 </head>
 
 <body>
     <!--generic navbar for website. TODO: i dont need it on every website (i.e Login screen), move it to another template. -->
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-        <a class="navbar-brand" href="{{ url_for('dashboard') }}">LightHub</a>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark" style="margin-bottom: 2em;">
+        <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+<!--            <div class="hub">
+                <span contenteditable="true">Code</span>
+                <span contenteditable="true">pen</span>
+            </div>          -->
+            LightHub
+        </a>
         <ul class="navbar-nav">
             {% block navbar %}
             {% endblock %}
@@ -32,10 +59,9 @@
 
     <!-- generic container for main content. -->
     <div class="container">
-        {% with messages = get_flashed_messages() %}
-        {% for message in messages %}
-            <!-- TODO: hier noch zwischen info und warnung unterscheiden-->
-            <div class="alert alert-info alert-dismissible fade show">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 {{ message }}
             </div>

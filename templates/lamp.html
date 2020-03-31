@@ -1,35 +1,14 @@
 {% extends "base.html" %}
 
-{% block scripts %}
-    <script src="{{ url_for('static', filename='js/iro.min.js') }}"></script>
-    <script>
-        var colorPicker = new iro.ColorPicker('#colorpicker', {
-            layout: [
-                { component: iro.ui.Wheel, options: {} }
-            ]
-        });
-//        colorPicker.ui.slice(1, 1);
-        colorPicker.on('color:change', function(color) {
-            // log the current color as a HEX string
-            console.log(color.rgba);
-            //POST to Server. TODO: limit ajax post requests!!
-            $.ajax({
-                url: '{{ url_for('lamp', lampid=lamp) }}',
-                data: color.rgba,
-                type: 'POST',
-//                contentType: 'application/json;charset=UTF-8',
-                success: function(response) {
-                    console.log(response);
-                },
-                error: function(error) {
-                    console.log("FEHLER!");
-                    console.log(error);
-                }
-            });
-        });
-    </script>
+{% block styles %}
+    <style>
+        #colorpicker {
+            width: 100%;
+            border-radius: 0.5em;
+            height: 300px;
+        }
+    </style>
 {% endblock %}
-
 
 {% block navbar %}
     <li class="nav-item active">
@@ -46,18 +25,86 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header"> Pick the Color </div>
-                <div class="card-body" id="colorpicker"></div>
+                <div class="card-body">
+                    <canvas id="colorpicker">
+                        Your Browser does not support canvas.
+                    </canvas>
+                    <script>
+                        var c = document.getElementById("colorpicker");
+                        var ctx = c.getContext("2d");
+                        var sendColor = null;
+                        const brightness = 100; //TODO: var machen und durch den slider setzen.
+                        // Create color gradient
+                        var colgradient = ctx.createLinearGradient(0, 0, c.width, 0);
+                        colgradient.addColorStop(0,    "rgb(255,   0,   0)");
+                        colgradient.addColorStop(0.15, "rgb(255,   0, 255)");
+                        colgradient.addColorStop(0.33, "rgb(0,     0, 255)");
+                        colgradient.addColorStop(0.49, "rgb(0,   255, 255)");
+                        colgradient.addColorStop(0.67, "rgb(0,   255,   0)");
+                        colgradient.addColorStop(0.84, "rgb(255, 255,   0)");
+                        colgradient.addColorStop(1,    "rgb(255,   0,   0)");
+                        // Create brightness gradient
+                        var brigradient = ctx.createLinearGradient(0,0,0, c.height);
+                        brigradient.addColorStop(0,   "rgba(0,     0,   0, 0.8)"); //TODO: play with these values (especially alpha)
+                        brigradient.addColorStop(1,   "rgba(0, 0, 0, 0.8)");
+                        brigradient.addColorStop(0.5, "rgba(255, 255, 255, 0)");
+                        brigradient.addColorStop(0.5, "rgba(0,     0,   0, 0)");
+                        
+
+                        function drawGradients() {
+                            ctx.fillStyle = colgradient;
+                            ctx.fillRect(0, 0, c.width, c.height);
+                        
+                            ctx.fillStyle = brigradient;
+                            ctx.fillRect(0,0,c.width, c.height);
+                        }
+                        drawGradients();
+
+
+                        c.addEventListener('click', function(e) {
+                            var img = ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
+                            sendColor = {
+                                'r': img[0],
+                                'g': img[1],
+                                'b': img[2],
+                                'a': brightness
+                            };
+                        });
+
+                        setInterval(function(){
+                            if ( sendColor != null ) {
+                                console.log(sendColor);
+
+                                $.ajax({
+                                    url: '{{ url_for('lamp', lampid=lamp) }}',
+                                    data: sendColor,
+                                    type: 'POST',
+                                    //contentType: 'application/json;charset=UTF-8',
+                                    success: function(response) {
+                                        console.log(response);
+                                    },
+                                    error: function(error) {
+                                        console.log("FEHLER!");
+                                        console.log(error);
+                                    }
+                                });
+
+                                sendColor = null;
+                            }
+                        } , 2000);
+                    </script>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-6" name="other controls">
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-header">Brightness</div>
                 <div class="card-body row">
                     <input class="col" type="range" min="1" max="100" value="90" id="brightness">
                 </div>
             </div>
-            
+
             <div class="card">
                 <div class="card-header">Create a Flow</div>
                 <div class="card-body">

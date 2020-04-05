@@ -26,7 +26,11 @@
     {% if lamps %}
         {% for lamp in lamps %}
             <div class="card">
-                <div class="card-body">{{ lamp.id }} und {{ lamp.ip }}</div>
+                <div class="card-body">
+                    {{ lamp.id }} und {{ lamp.ip }}
+
+                    <!--<button type="button" class="btn btn-outline-danger">Power</button> TODO: outline if off, solid if on. -->
+                </div>
                 <a href="{{ url_for('lamp', lampid=lamp.id) }}" class="stretched-link"></a>
             </div>
         {% endfor %}

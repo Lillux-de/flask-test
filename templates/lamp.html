@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block styles %}
-  <!--  <style>
+    <style>
         #colorpicker {
-            width: 300px;
+            width: 100%;
+            height: 100%;
             border-radius: 0.5em;
-            height: 300px;
         }
-    </style> -->
+    </style>
 {% endblock %}
 
 {% block navbar %}
@@ -25,8 +25,8 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header"> Pick the Color </div>
-                <div class="card-body">
-                    <canvas id="colorpicker" width="300" height="300" style="border:1px solid #d3d3d3; border-radius: 0.5em;">
+                <div class="card-body" style="height: 50%;">
+                    <canvas id="colorpicker">
                         Your browser does not support the HTML5 canvas tag.
                     </canvas>
                         
@@ -65,42 +65,67 @@
     </div>
 
     <script>
+        $(document).ready(drawGradients);
+ //       $(document).ready(recalculateOffset);
+
+        $(window).on("resize", function() {
+            drawGradients();
+//            recalculateOffset();
+        });
+  //      $(window).on("scroll", function(e){
+    //        recalculateOffset();
+      //  });
+
         var data = {};
         
         var c = document.getElementById("colorpicker");
         var sl = document.getElementById("brightness");
 
-        var ctx = c.getContext("2d");
-        // Create color gradient
-        var colgradient = ctx.createLinearGradient(0, 0, c.width, 0);
-        colgradient.addColorStop(0,    "rgb(255,   0,   0)");
-        colgradient.addColorStop(0.15, "rgb(255,   0, 255)");
-        colgradient.addColorStop(0.33, "rgb(0,     0, 255)");
-        colgradient.addColorStop(0.5, "rgb(0,   255, 255)");
-        colgradient.addColorStop(0.67, "rgb(0,   255,   0)");
-        colgradient.addColorStop(0.84, "rgb(255, 255,   0)");
-        colgradient.addColorStop(1,    "rgb(255,   0,   0)");
-        // Create gradient for edges
-        var brigradient = ctx.createLinearGradient(0,0,0, c.height);
-        brigradient.addColorStop(0,   "rgba(0,     0,   0, 0.8)"); //TODO: play with these values (especially alpha)
-        brigradient.addColorStop(1,   "rgba(0, 0, 0, 0.8)");
-        brigradient.addColorStop(0.5, "rgba(255, 255, 255, 0)");
-        brigradient.addColorStop(0.5, "rgba(0,     0,   0, 0)");
-        
+        var ctx;
+        //var offX, offY;
+
         function drawGradients() {
+            ctx = c.getContext("2d");
+            // Create color gradient
+            var colgradient = ctx.createLinearGradient(0, 0, c.width, 0);
+            colgradient.addColorStop(0,    "rgb(255,   0,   0)");
+            colgradient.addColorStop(0.15, "rgb(255,   0, 255)");
+            colgradient.addColorStop(0.33, "rgb(0,     0, 255)");
+            colgradient.addColorStop(0.5, "rgb(0,   255, 255)");
+            colgradient.addColorStop(0.67, "rgb(0,   255,   0)");
+            colgradient.addColorStop(0.84, "rgb(255, 255,   0)");
+            colgradient.addColorStop(1,    "rgb(255,   0,   0)");
+            // Create gradient for edges
+            var brigradient = ctx.createLinearGradient(0,0,0, c.height);
+            brigradient.addColorStop(0,   "rgba(0,     0,   0, 0.8)"); //FIXME: play with these values (especially alpha)
+            brigradient.addColorStop(1,   "rgba(0, 0, 0, 0.8)");
+            brigradient.addColorStop(0.5, "rgba(255, 255, 255, 0)");
+            brigradient.addColorStop(0.5, "rgba(0,     0,   0, 0)");
+            //paint color gradient
             ctx.fillStyle = colgradient;
             ctx.fillRect(0, 0, c.width, c.height);
-        
+            //paint brightness gradient
             ctx.fillStyle = brigradient;
             ctx.fillRect(0,0,c.width, c.height);
         }
-        //$(document).ready(drawGradients);
-        drawGradients();
 
+     //   function recalculateOffset(){
+       //     var bounds = c.getBoundingClientRect();
+   //         offX = bounds.left;
+     //       offY = bounds.top;
+       // }
 
         //Colorpicker event
         c.addEventListener('click', function(e) {
-            var img = ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
+            var bounds = c.getBoundingClientRect();
+            // get the mouse coordinates, subtract the canvas top left and any scrolling
+            x = e.pageX - bounds.left - scrollX;
+            y = e.pageY - bounds.top - scrollY;
+            
+            //mouseX = parseInt(e.clientX - offX);
+            //mouseY = parseInt(e.clientY - offY);
+
+            var img = ctx.getImageData(x, y, 1, 1).data;
             data["color"] = {
                 "r" : img[0],
                 "g" : img[1],
